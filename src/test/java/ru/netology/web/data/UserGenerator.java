@@ -11,21 +11,19 @@ import lombok.Value;
 import static io.restassured.RestAssured.given;
 
 public class UserGenerator {
+    private UserGenerator() {
+    }
+
+    private static final Faker faker = new Faker();
 
     @Value
     public static class AuthInfo {
-        private String login;
-        private String password;
-        private String status;
-
-//        public static AuthInfo user(String status) {
-//            Faker faker = new Faker();
-//
-//            return new AuthInfo(faker.name().username(), faker.internet().password(), status);
-//        }
+        String login;
+        String password;
+        String status;
     }
 
-    private static RequestSpecification requestSpec = new RequestSpecBuilder()
+    private static final RequestSpecification requestSpec = new RequestSpecBuilder()
             .setBaseUri("http://localhost")
             .setPort(9999)
             .setAccept(ContentType.JSON)
@@ -34,7 +32,6 @@ public class UserGenerator {
             .build();
 
     public static AuthInfo getNewUser(String status) {
-        Faker faker = new Faker();
         Gson gson = new Gson();
         AuthInfo user = new AuthInfo(faker.name().username(), faker.internet().password(), status);
 
@@ -46,5 +43,13 @@ public class UserGenerator {
                 .then()
                 .statusCode(200);
         return user;
+    }
+
+    public static String getInvalidLogin() {
+        return faker.name().fullName();
+    }
+
+    public static String getInvalidPassword() {
+        return faker.internet().password(1, 2);
     }
 }

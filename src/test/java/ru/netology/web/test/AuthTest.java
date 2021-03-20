@@ -1,8 +1,6 @@
 package ru.netology.web.test;
 
-import com.github.javafaker.Faker;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.netology.web.data.UserGenerator;
 
 import static com.codeborne.selenide.Selenide.*;
@@ -10,9 +8,10 @@ import static com.codeborne.selenide.Condition.*;
 
 public class AuthTest {
 
-    UserGenerator.AuthInfo newActiveUser = UserGenerator.getNewUser("active");
-    UserGenerator.AuthInfo newBlockedUser = UserGenerator.getNewUser("blocked");
-    Faker faker = new Faker();
+    private final UserGenerator.AuthInfo newActiveUser = UserGenerator.getNewUser("active");
+    private final UserGenerator.AuthInfo newBlockedUser = UserGenerator.getNewUser("blocked");
+    private final String invalidLogin = UserGenerator.getInvalidLogin();
+    private final String invalidPassword = UserGenerator.getInvalidPassword();
 
     @BeforeEach
     void setUp() {
@@ -43,7 +42,7 @@ public class AuthTest {
     @Test
     void shouldGetErrorIfActiveUserAndIncorrectPassword() {
         $("[data-test-id='login'] .input__control").setValue(newActiveUser.getLogin());
-        $("[data-test-id='password'] .input__control").setValue(faker.internet().password(1,2));
+        $("[data-test-id='password'] .input__control").setValue(invalidPassword);
         $("[data-test-id='action-login']").click();
         $("[data-test-id=error-notification]")
                 .shouldBe(visible)
@@ -52,7 +51,7 @@ public class AuthTest {
 
     @Test
     void shouldGetErrorIfActiveUserAndIncorrectLogin() {
-        $("[data-test-id='login'] .input__control").setValue(faker.name().fullName());
+        $("[data-test-id='login'] .input__control").setValue(invalidLogin);
         $("[data-test-id='password'] .input__control").setValue(newActiveUser.getPassword());
         $("[data-test-id='action-login']").click();
         $("[data-test-id=error-notification]")
@@ -91,7 +90,7 @@ public class AuthTest {
 
     @Test
     void shouldGetErrorIfBlockedUserAndIncorrectLogin() {
-        $("[data-test-id='login'] .input__control").setValue(faker.name().fullName());
+        $("[data-test-id='login'] .input__control").setValue(invalidLogin);
         $("[data-test-id='password'] .input__control").setValue(newBlockedUser.getPassword());
         $("[data-test-id='action-login']").click();
         $("[data-test-id=error-notification]")
@@ -102,7 +101,7 @@ public class AuthTest {
     @Test
     void shouldGetErrorIfBlockedUserAndIncorrectPassword() {
         $("[data-test-id='login'] .input__control").setValue(newBlockedUser.getLogin());
-        $("[data-test-id='password'] .input__control").setValue(faker.internet().password(1,2));
+        $("[data-test-id='password'] .input__control").setValue(invalidPassword);
         $("[data-test-id='action-login']").click();
         $("[data-test-id=error-notification]")
                 .shouldBe(visible)
